@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "papergame",
+  "version": "${version}",
+  "name": "PaperGame",
+  "description": "Rig settings and game simulation toolkit client mod.",
+  "authors": [
+    "Developer"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/papergame/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.example.papergame.PaperGameMod"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.16.5",
+    "minecraft": ">=26.2",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
