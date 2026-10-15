@@ -2,43 +2,45 @@ package com.example.papergame;
 
 import com.example.papergame.gui.PaperGameScreen;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 
 public class KeybindManager {
+    private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("papergame", "controls"));
     public static KeyMapping openGuiKey;
     public static KeyMapping toggleRigKey;
     public static KeyMapping switchSideKey;
 
     public static void registerKeybinds() {
-        openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        openGuiKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.papergame.open",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_P,
-                "category.papergame"
+                CATEGORY
         ));
 
-        toggleRigKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        toggleRigKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.papergame.rig",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_G,
-                "category.papergame"
+                CATEGORY
         ));
 
-        switchSideKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+        switchSideKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.papergame.switch",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_H,
-                "category.papergame"
+                CATEGORY
         ));
     }
 
     public static void handleKeybinds(Minecraft client) {
         while (openGuiKey.consumeClick()) {
-            if (client.screen == null) {
-                client.setScreen(new PaperGameScreen("Settings"));
+            if (client.gui.screen() == null) {
+                client.gui.setScreen(new PaperGameScreen("Settings"));
             }
         }
 
@@ -46,9 +48,8 @@ public class KeybindManager {
             ConfigManager.data.rigEnabled = !ConfigManager.data.rigEnabled;
             ConfigManager.saveConfig();
             if (client.player != null) {
-                client.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.literal("PaperGame Rig: " + (ConfigManager.data.rigEnabled ? "ON" : "OFF")),
-                        true
+                client.player.sendOverlayMessage(
+                        net.minecraft.network.chat.Component.literal("PaperGame Rig: " + (ConfigManager.data.rigEnabled ? "ON" : "OFF"))
                 );
             }
         }
@@ -57,9 +58,8 @@ public class KeybindManager {
             ConfigManager.data.activeSide = ConfigManager.data.activeSide.equals("A") ? "E" : "A";
             ConfigManager.saveConfig();
             if (client.player != null) {
-                client.player.displayClientMessage(
-                        net.minecraft.network.chat.Component.literal("PaperGame Side Switched to: " + ConfigManager.data.activeSide),
-                        true
+                client.player.sendOverlayMessage(
+                        net.minecraft.network.chat.Component.literal("PaperGame Side Switched to: " + ConfigManager.data.activeSide)
                 );
             }
         }

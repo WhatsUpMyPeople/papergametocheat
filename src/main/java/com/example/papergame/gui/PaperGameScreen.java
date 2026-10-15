@@ -2,7 +2,7 @@ package com.example.papergame.gui;
 
 import com.example.papergame.ConfigManager;
 import com.example.papergame.simulation.GameManager;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -28,13 +28,13 @@ public class PaperGameScreen extends Screen {
         int centerX = this.width / 2;
         int startY = 40;
 
-        this.addRenderableWidget(Button.builder(Component.literal("Settings"), b -> this.minecraft.setScreen(new PaperGameScreen("Settings")))
+        this.addRenderableWidget(Button.builder(Component.literal("Settings"), b -> this.minecraft.gui.setScreen(new PaperGameScreen("Settings")))
                 .bounds(centerX - 154, startY, 72, 20).build());
-        this.addRenderableWidget(Button.builder(Component.literal("PaperGame"), b -> this.minecraft.setScreen(new PaperGameScreen("PaperGame")))
+        this.addRenderableWidget(Button.builder(Component.literal("PaperGame"), b -> this.minecraft.gui.setScreen(new PaperGameScreen("PaperGame")))
                 .bounds(centerX - 78, startY, 72, 20).build());
-        this.addRenderableWidget(Button.builder(Component.literal("50/50"), b -> this.minecraft.setScreen(new PaperGameScreen("50/50")))
+        this.addRenderableWidget(Button.builder(Component.literal("50/50"), b -> this.minecraft.gui.setScreen(new PaperGameScreen("50/50")))
                 .bounds(centerX + 2, startY, 72, 20).build());
-        this.addRenderableWidget(Button.builder(Component.literal("BlackJack"), b -> this.minecraft.setScreen(new PaperGameScreen("BlackJack")))
+        this.addRenderableWidget(Button.builder(Component.literal("BlackJack"), b -> this.minecraft.gui.setScreen(new PaperGameScreen("BlackJack")))
                 .bounds(centerX + 82, startY, 72, 20).build());
 
         startY += 35;
@@ -117,27 +117,30 @@ public class PaperGameScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, delta);
-        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 0xFFFFFF);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, delta);
+        centeredText(guiGraphics, this.title.getString(), 20, 0xFFFFFFFF);
 
         String dispenserText = String.format("Dispensers [1-9] -> Left: %d | Right: %d (Active Side: %s)", 
                 GameManager.leftDispenserValue,
                 GameManager.rightDispenserValue,
                 ConfigManager.data.activeSide);
-        guiGraphics.drawCenteredString(this.font, dispenserText, this.width / 2, 65, 0xFFAA00);
+        centeredText(guiGraphics, dispenserText, 65, 0xFFFFAA00);
 
         if (!feedbackMessage.isEmpty()) {
-            guiGraphics.drawCenteredString(this.font, feedbackMessage, this.width / 2, this.height - 40, 0xFF5555);
+            centeredText(guiGraphics, feedbackMessage, this.height - 40, 0xFFFF5555);
         }
 
         if (currentTab.equals("50/50") || currentTab.equals("BlackJack")) {
             String stats = String.format("Simulation Balance: %.2f | Wins: %d | Losses: %d",
                     ConfigManager.data.simulationBalance, ConfigManager.data.totalWins, ConfigManager.data.totalLosses);
-            guiGraphics.drawCenteredString(this.font, stats, this.width / 2, 95, 0x55FF55);
+            centeredText(guiGraphics, stats, 95, 0xFF55FF55);
         }
 
-        super.render(guiGraphics, mouseX, mouseY, delta);
+    }
+
+    private void centeredText(GuiGraphicsExtractor graphics, String value, int y, int color) {
+        graphics.text(this.font, value, (this.width - this.font.width(value)) / 2, y, color, true);
     }
 
     @Override
