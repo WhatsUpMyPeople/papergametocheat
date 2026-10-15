@@ -9,7 +9,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeybindManager {
     private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(
-            net.minecraft.resources.Identifier.fromNamespaceAndPath("papergame", "controls")));
+            net.minecraft.resources.Identifier.fromNamespaceAndPath("papergame", "controls"));
     public static KeyMapping openGuiKey;
     public static KeyMapping toggleRigKey;
     public static KeyMapping switchSideKey;
